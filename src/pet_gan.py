@@ -109,12 +109,12 @@ def one_hot_if_needed(label: np.ndarray, vocab_size_: int = 1000) -> np.ndarray:
 
 
 def sample(
-        sess_: tf.python.client.session.Session,
+        sess_: object,#tf.python.client.session.Session,
         noise_: np.ndarray,
         label_: int,
         truncation_: float = 1.0,
         batch_size_: int = 10,
-        # vocab_size_: int = 1000,
+        vocab_size: int = 1000,
 ) -> np.ndarray:
     """Generate samples with GAN.
 
@@ -146,7 +146,7 @@ def sample(
                 noise.shape[0], label.shape[0]
             )
         )
-    label = one_hot_if_needed(label, vocab_size_)
+    label = one_hot_if_needed(label, vocab_size_=vocab_size)
     ims_ = []
     for batch_start in range(0, num, batch_size_):
         slice_ = slice(batch_start, min(num, batch_start + batch_size_))
@@ -264,7 +264,7 @@ if __name__ == "__main__":
     z = truncated_z_sample(num_samples, truncation, noise_seed)
     y = int(category.split(")")[0])
 
-    ims = sample(sess, z, y, truncation_=truncation, vocab_size_=vocab_size)
+    ims = sample(sess, z, y, truncation_=truncation, vocab_size=vocab_size)
     img_grid = imgrid(ims, cols=min(num_samples, 5))
     im = PIL.Image.fromarray(img_grid)
     im.save(filename)
