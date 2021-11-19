@@ -101,10 +101,10 @@ class PDFIngestor(IngestorInterface):
 
 
 class Ingestor(IngestorInterface):
-    ingesters = [DocxIngestor, CSVIngestor, PDFIngestor]
+    ingestors = [DocxIngestor, CSVIngestor, PDFIngestor]
        
     @classmethod
     def parse(cls, path: str) -> List[QuoteModel]:
-        for ingester in cls.ingesters:
+        for ingester in cls.ingestors:
             if ingester.can_ingest(path):
                 return ingester.parse(path)
