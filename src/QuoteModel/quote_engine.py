@@ -1,3 +1,6 @@
+import os
+import random
+import subprocess
 from abc import ABC, abstractmethod
 from typing import List
 import pandas as pd
@@ -69,8 +72,36 @@ class DocxIngestor(IngestorInterface):
         return quotes
 
 
+class PDFIngestor(IngestorInterface):
+    allowed_extensions = ['pdf']
+    
+    @classmethod
+    def parse(cls, path: str) -> List[QuoteModel]:
+        if not cls.can_ingest(path):
+            raise Exception('cannot ingest exception')
+        
+        tmp = f'./tmp/{random.randint(0,100000000)}.txt'
+        call = subprocess.call(['pdftotext', path, tmp])
+        
+        with open(tmp, "r") as file_ref:
+
+            quotes = []
+
+            for line in file_ref.readlines():
+                line = line.strip('\n\r').strip()
+                if len(line) > 0:
+                    parse = line.split(',')
+                    quote = parse[0].split('" - ')[0][1:]
+                    author = parse[0].split('" - ')[1]
+                    print(quote, author)
+                    new_quote = QuoteModel(quote, author)
+                    quotes.append(new_quote)
+        os.remove(tmp)
+        return quotes
+
+
 class Ingestor(IngestorInterface):
-    ingesters = [DocxIngestor, CSVIngestor]
+    ingesters = [DocxIngestor, CSVIngestor, PDFIngestor]
        
     @classmethod
     def parse(cls, path: str) -> List[QuoteModel]:
