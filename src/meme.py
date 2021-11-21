@@ -1,23 +1,30 @@
 import os
 import random
 
-# @TODO Import your Ingestor and MemeEngine classes
+from QuoteModel.quote_engine import Ingestor, QuoteModel
+from MemeEngine.meme_engine import MemeEngine
 
 
 def generate_meme(path=None, body=None, author=None):
-    """ Generate a meme given an path and a quote """
+    """ Generate a meme given a path and a quote """
     img = None
     quote = None
 
     if path is None:
-        images = "./_data/photos/dog/"
+        image_path = "./_data/photos/dog/"
         imgs = []
-        for root, dirs, files in os.walk(images):
+        for root, dirs, files in os.walk(image_path):
             imgs = [os.path.join(root, name) for name in files]
 
         img = random.choice(imgs)
     else:
-        img = path[0]
+        if not os.path.isdir(path):
+            raise OSError("Directory path does not exist.")
+        imgs = []
+        for root, dirs, files in os.walk(path):
+            imgs = [os.path.join(root, name) for name in files]
+
+        img = random.choice(imgs)
 
     if body is None:
         quote_files = ['./_data/DogQuotes/DogQuotesTXT.txt',
@@ -45,4 +52,5 @@ if __name__ == "__main__":
     # body - quote body to add to the image
     # author - quote author to add to the image
     args = None
-    print(generate_meme(args.path, args.body, args.author))
+    print(generate_meme("./_data/photos/cat/", "I'm a kitty", "Mr. Snickers"))
+    # print(generate_meme(args.path, args.body, args.author))
