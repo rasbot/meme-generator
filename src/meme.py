@@ -1,5 +1,6 @@
 import os
 import random
+import argparse
 
 from QuoteModel.quote_engine import Ingestor, QuoteModel
 from MemeEngine.meme_engine import MemeEngine
@@ -51,6 +52,11 @@ if __name__ == "__main__":
     # path - path to an image file
     # body - quote body to add to the image
     # author - quote author to add to the image
-    args = None
-    print(generate_meme("./_data/photos/cat/", "I'm a kitty", "Mr. Snickers"))
-    # print(generate_meme(args.path, args.body, args.author))
+    parser = argparse.ArgumentParser(description='Create a meme using a photo, a quote, and an author.')
+    parser.add_argument('--path', type=str, default=None, help='path to image file')
+    parser.add_argument('--body', type=str, default=None, help='quote to add to image')
+    parser.add_argument('--author', type=str, default=None, help='author of quote to add to image')
+    
+    args = parser.parse_args()
+    # print(generate_meme("./_data/photos/cat/", "I'm a kitty", "Mr. Snickers"))
+    print(generate_meme(args.path, args.body, args.author))
