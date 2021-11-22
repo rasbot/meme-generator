@@ -8,6 +8,11 @@ from typing import List
 import pandas as pd
 import docx
 
+#TODO:
+# tmp txt file is not being deleted from tmp folder
+# One image in tmp folder has text that spills over side of picture
+# Create cats folder with cat data
+# Get more cat/dog images
 
 class QuoteModel:
     """A `QuoteModel` object which has a quote and the associated author.
@@ -92,7 +97,7 @@ class CSVIngestor(IngestorInterface):
             raise Exception("cannot ingest exception")
 
         quotes = []
-        df = pd.read_csv(path, header=0)
+        df = pd.read_csv(path, header=0, encoding="ISO-8859-1")
 
         for _, row in df.iterrows():
             body = row["body"]
@@ -136,7 +141,7 @@ class PDFIngestor(IngestorInterface):
         tmp = f"./tmp/{random.randint(0,100000000)}.txt"
         call = subprocess.call(["pdftotext", path, tmp])
 
-        with open(tmp, "r") as file_ref:
+        with open(tmp, "r", encoding='utf-8') as file_ref:
 
             quotes = []
 
