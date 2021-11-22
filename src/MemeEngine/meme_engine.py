@@ -18,13 +18,20 @@ class MemeEngine:
         return img
 
     def write_meme(self, img, body, author):
+        body_font_size = 40
+        author_font_size = 20
+        max_quote_len = 25
+        if len(body) > max_quote_len:
+            body_font_size = 30
+            author_font_size = 18
+
         author = "- " + author
         x_pos = randint(int(0.02 * img.width), int(0.12 * img.width))
         y_pos = randint(int(0.02 * img.height), int(0.8 * img.height))
         draw = ImageDraw.Draw(img)
-        font = ImageFont.truetype('./fonts/cambriaz.ttf', size=40)
+        font = ImageFont.truetype('./fonts/cambriaz.ttf', size=body_font_size)
         draw.text((x_pos, y_pos), body, font=font, fill='white', stroke_width=2, stroke_fill='black')
-        font = ImageFont.truetype('./fonts/cambriaz.ttf', size=20)
+        font = ImageFont.truetype('./fonts/cambriaz.ttf', size=author_font_size)
         draw.text((x_pos + 30, y_pos + 50), author, font=font, fill='white', stroke_width=2, stroke_fill='black')
         return img
 
