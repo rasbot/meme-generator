@@ -50,6 +50,7 @@ class MemeEngine:
             x_offset = 22
         else:
             lines = [body]
+            x_offset = 0
 
         author = "- " + author
         x_pos = randint(int(0.02 * img.width), int(0.12 * img.width))
