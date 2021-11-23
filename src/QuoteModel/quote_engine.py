@@ -8,12 +8,6 @@ from typing import List
 import pandas as pd
 import docx
 
-#TODO:
-# tmp txt file is not being deleted from tmp folder
-# One image in tmp folder has text that spills over side of picture
-# Create cats folder with cat data
-# Get more cat/dog images
-
 class QuoteModel:
     """A `QuoteModel` object which has a quote and the associated author.
     """
@@ -148,11 +142,14 @@ class PDFIngestor(IngestorInterface):
             for line in file_ref.readlines():
                 line = line.strip("\n\r").strip()
                 if len(line) > 0:
-                    parse = line.split(",")
-                    body = parse[0].split('" - ')[0][1:]
-                    author = parse[0].split('" - ')[1]
-                    new_quote = QuoteModel(body, author)
-                    quotes.append(new_quote)
+                    try:
+                        parse = line.split(",")
+                        body = parse[0].split('" - ')[0][1:]
+                        author = parse[0].split('" - ')[1]
+                        new_quote = QuoteModel(body, author)
+                        quotes.append(new_quote)
+                    except IndexError:
+                        print("Index out of range")
         os.remove(tmp)
         return quotes
 
