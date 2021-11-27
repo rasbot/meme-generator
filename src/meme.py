@@ -8,8 +8,6 @@ from MemeEngine.meme_engine import MemeEngine
 
 def generate_meme(path='dog', body=None, author=None):
     """ Generate a meme given a path and a quote """
-    img = None
-    quote = None
 
     if path == 'dog':
         image_path = "./_data/photos/dog/"
