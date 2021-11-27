@@ -29,10 +29,9 @@ def get_images(image_path):
         imgs = [os.path.join(root, name) for name in files]
     return imgs
 
-def setup():
+def setup(animal='dog', quote_type='normal'):
     """ Load all resources """
-    animal = 'dog'
-    quote_type = 'normal'
+
     quote_dict = {
         'dog': {
             'normal': get_quotes("Dog", "normal"),
@@ -57,13 +56,21 @@ def setup():
 
     return imgs, quotes
 
-
-imgs, quotes = setup()
-
-
-@app.route('/')
+@app.route('/', methods=['GET', 'POST'])
 def meme_rand():
     """ Generate a random meme """
+    use_cat = False
+    use_gpt2 = False
+    if request.method == 'POST':
+        use_cat = request.form.get('use cat')
+        use_gpt2 = request.form.get('use machine learning quotes')
+    animal = 'dog'
+    quote_type = 'normal'
+    if use_cat:
+        animal = 'cat'
+    if use_gpt2:
+        quote_type = 'gpt2'
+    imgs, quotes = setup(animal, quote_type)
     img = random.choice(imgs)
     quote = random.choice(quotes)
 
