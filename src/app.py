@@ -3,48 +3,70 @@ import os
 import requests
 from flask import Flask, render_template, abort, request
 
-# @TODO Import your Ingestor and MemeEngine classes
+from QuoteModel.quote_engine import Ingestor, QuoteModel
+from MemeEngine.meme_engine import MemeEngine
 
 app = Flask(__name__)
 
 meme = MemeEngine('./static')
 
 
+def get_quotes(animal, quote_type):
+    paths = [f'./_data/{animal}Quotes/{quote_type}/{animal}QuotesTXT.txt',
+            f'./_data/{animal}Quotes/{quote_type}/{animal}QuotesDOCX.docx',
+            f'./_data/{animal}Quotes/{quote_type}/{animal}QuotesPDF.pdf',
+            f'./_data/{animal}Quotes/{quote_type}/{animal}QuotesCSV.csv']
+    
+    quotes = []
+    for f in paths:
+        quotes.extend(Ingestor.parse(f))
+
+    return quotes
+
+def get_images(image_path):
+    imgs = []
+    for root, dirs, files in os.walk(image_path):
+        imgs = [os.path.join(root, name) for name in files]
+    return imgs
+
 def setup():
     """ Load all resources """
+    animal = 'dog'
+    quote_type = 'normal'
+    quote_dict = {
+        'dog': {
+            'normal': get_quotes("Dog", "normal"),
+            'gpt2': get_quotes("Dog", "gpt2")
+            },
+        'cat': {
+            'normal':  get_quotes("Cat", "normal"),
+            'gpt2': get_quotes("Cat", "gpt2")
+            }
+    }
 
-    quote_files = ['./_data/DogQuotes/DogQuotesTXT.txt',
-                   './_data/DogQuotes/DogQuotesDOCX.docx',
-                   './_data/DogQuotes/DogQuotesPDF.pdf',
-                   './_data/DogQuotes/DogQuotesCSV.csv']
+    dog_images_path = "./_data/photos/dog/"
+    cat_images_path = "./_data/photos/cat/"
 
-    # TODO: Use the Ingestor class to parse all files in the
-    # quote_files variable
-    quotes = None
+    image_dict = {'dog': get_images(dog_images_path),
+                  'cat': get_images(cat_images_path)
+                  }
 
-    images_path = "./_data/photos/dog/"
-
-    # TODO: Use the pythons standard library os class to find all
-    # images within the images images_path directory
-    imgs = None
-
-    return quotes, imgs
+    imgs = image_dict[animal]
+    quotes = quote_dict[animal][quote_type]
 
 
-quotes, imgs = setup()
+    return imgs, quotes
+
+
+imgs, quotes = setup()
 
 
 @app.route('/')
 def meme_rand():
     """ Generate a random meme """
+    img = random.choice(imgs)
+    quote = random.choice(quotes)
 
-    # @TODO:
-    # Use the random python standard library class to:
-    # 1. select a random image from imgs array
-    # 2. select a random quote from the quotes array
-
-    img = None
-    quote = None
     path = meme.make_meme(img, quote.body, quote.author)
     return render_template('meme.html', path=path)
 
@@ -58,15 +80,20 @@ def meme_form():
 @app.route('/create', methods=['POST'])
 def meme_post():
     """ Create a user defined meme """
+    image_url = request.form['image_url']
+    img_file = f'./static/{random.randint(0,100000)}.png'
 
-    # @TODO:
-    # 1. Use requests to save the image from the image_url
-    #    form param to a temp local file.
-    # 2. Use the meme object to generate a meme using this temp
-    #    file and the body and author form paramaters.
-    # 3. Remove the temporary saved image.
+    response = requests.get(image_url)
+    if response.status_code == 200:
+        with open(img_file, 'wb') as f:
+            f.write(response.content)
 
-    path = None
+    body = request.form['body']
+    author = request.form['author']
+
+    path = meme.make_meme(img_file, body, author)
+
+    os.remove(img_file)
 
     return render_template('meme.html', path=path)
 
