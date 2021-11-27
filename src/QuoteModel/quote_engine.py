@@ -1,8 +1,10 @@
-"""A quote engine which can read in quotes saved in various file formats, and create `QuoteModel` objects.
+"""Read in various file formats, and create `QuoteModel` objects for quotes.
 
-Uses an Ingestor Interface to create parsers for txt, pdf, docx, and csv file types.
-Quotes and authors are extracted from each supported file, and `QuoteModel` objects are
-created for all quote/author pairs."""
+Uses an Ingestor Interface to create parsers for txt, pdf, docx, and csv
+file types.
+Quotes and authors are extracted from each supported file, and
+`QuoteModel` objects are created for all quote/author pairs.
+"""
 
 import os
 import random
@@ -12,9 +14,10 @@ from typing import List
 import pandas as pd
 import docx
 
+
 class QuoteModel:
-    """A `QuoteModel` object which has a quote and the associated author.
-    """
+    """A `QuoteModel` object which has a quote and the associated author."""
+
     def __init__(self, body: str, author: str):
         """Initialize a `QuoteModel` object.
 
@@ -24,6 +27,10 @@ class QuoteModel:
         """
         self.body = body
         self.author = author
+
+    def __str__(self):
+        """Return a readable format for this object."""
+        return f"QuoteModel({self.body} - {self.author})"
 
     def __repr__(self):
         """Return `repr(self)`, a computer-readable string
@@ -42,6 +49,7 @@ class IngestorInterface(ABC):
     Args:
         ABC (Object): Abstract Base Class super class.
     """
+
     allowed_extensions = []
 
     @classmethod
@@ -63,12 +71,12 @@ class IngestorInterface(ABC):
     def parse(cls, path: str) -> List[QuoteModel]:
         """parse method must be implemented in any
         Ingestor class."""
-        pass
 
 
 class TXTIngestor(IngestorInterface):
     """Text ingestor class which can parse text
     files to extract quotes and authors."""
+
     allowed_extensions = ["txt"]
 
     @classmethod
@@ -97,11 +105,11 @@ class TXTIngestor(IngestorInterface):
         with open(path, "r") as infile:
             data = infile.readlines()
 
-        for d in data:
-            d_ = d.strip()
-            d_split = d_.split(" - ")
-            body = d_split[0]
-            author = d_split[1]
+        for dat in data:
+            dat_ = dat.strip()
+            dat_split = dat_.split(" - ")
+            body = dat_split[0]
+            author = dat_split[1]
             new_quote = QuoteModel(body, author)
             quotes.append(new_quote)
 
@@ -125,6 +133,7 @@ class CSVIngestor(IngestorInterface):
     Returns:
         List[QuoteModel]: List of `QuoteModel objects.
     """
+
     allowed_extensions = ["csv"]
 
     @classmethod
@@ -133,9 +142,9 @@ class CSVIngestor(IngestorInterface):
             raise Exception("cannot ingest exception")
 
         quotes = []
-        df = pd.read_csv(path, header=0, encoding="ISO-8859-1")
+        quote_df = pd.read_csv(path, header=0, encoding="ISO-8859-1")
 
-        for _, row in df.iterrows():
+        for _, row in quote_df.iterrows():
             body = row["body"]
             author = row["author"]
             new_quote = QuoteModel(body, author)
@@ -161,6 +170,7 @@ class DocxIngestor(IngestorInterface):
     Returns:
         List[QuoteModel]: List of `QuoteModel objects.
     """
+
     allowed_extensions = ["docx"]
 
     @classmethod
@@ -199,6 +209,7 @@ class PDFIngestor(IngestorInterface):
     Returns:
         List[QuoteModel]: List of `QuoteModel objects.
     """
+
     allowed_extensions = ["pdf"]
 
     @classmethod
@@ -207,9 +218,9 @@ class PDFIngestor(IngestorInterface):
             raise Exception("cannot ingest exception")
 
         tmp = f"./tmp/{random.randint(0,100000000)}.txt"
-        call = subprocess.call(["pdftotext", path, tmp])
+        _ = subprocess.call(["pdftotext", path, tmp])
 
-        with open(tmp, "r", encoding='utf-8') as file_ref:
+        with open(tmp, "r", encoding="utf-8") as file_ref:
 
             quotes = []
 
@@ -230,6 +241,7 @@ class PDFIngestor(IngestorInterface):
 
 class Ingestor(IngestorInterface):
     """Ingestor class which ingests any allowed quote file."""
+
     ingestors = [TXTIngestor, DocxIngestor, CSVIngestor, PDFIngestor]
 
     @classmethod
@@ -249,3 +261,4 @@ class Ingestor(IngestorInterface):
         for ingester in cls.ingestors:
             if ingester.can_ingest(path):
                 return ingester.parse(path)
+        return None
