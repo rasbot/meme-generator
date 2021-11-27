@@ -6,32 +6,34 @@ from QuoteModel.quote_engine import Ingestor, QuoteModel
 from MemeEngine.meme_engine import MemeEngine
 
 
-def generate_meme(path=None, body=None, author=None):
+def generate_meme(path='dog', body=None, author=None):
     """ Generate a meme given a path and a quote """
     img = None
     quote = None
 
-    if path is None:
+    if path == 'dog':
         image_path = "./_data/photos/dog/"
-        imgs = []
-        for root, dirs, files in os.walk(image_path):
-            imgs = [os.path.join(root, name) for name in files]
-
-        img = random.choice(imgs)
     else:
-        if not os.path.isdir(path):
-            raise OSError("Directory path does not exist.")
-        imgs = []
-        for root, dirs, files in os.walk(path):
-            imgs = [os.path.join(root, name) for name in files]
+        image_path = "./_data/photos/cat/"
+    imgs = []
+    for root, dirs, files in os.walk(image_path):
+        imgs = [os.path.join(root, name) for name in files]
 
-        img = random.choice(imgs)
+    img = random.choice(imgs)
 
     if body is None:
-        quote_files = ['./_data/DogQuotes/DogQuotesTXT.txt',
-                       './_data/DogQuotes/DogQuotesDOCX.docx',
-                       './_data/DogQuotes/DogQuotesPDF.pdf',
-                       './_data/DogQuotes/DogQuotesCSV.csv']
+        if author == 'gpt2':
+            folder = 'gpt2'
+        else:
+            folder = 'normal'
+        if path == 'dog':
+            animal = 'Dog'
+        else:
+            animal = 'Cat'
+        quote_files = [f'./_data/{animal}Quotes/{folder}/{animal}QuotesTXT.txt',
+                    f'./_data/{animal}Quotes/{folder}/{animal}QuotesDOCX.docx',
+                    f'./_data/{animal}Quotes/{folder}/{animal}QuotesPDF.pdf',
+                    f'./_data/{animal}Quotes/{folder}/{animal}QuotesCSV.csv']
         quotes = []
         for f in quote_files:
             quotes.extend(Ingestor.parse(f))
@@ -48,10 +50,8 @@ def generate_meme(path=None, body=None, author=None):
 
 
 if __name__ == "__main__":
-    # @TODO Use ArgumentParser to parse the following CLI arguments
-    # path - path to an image file
-    # body - quote body to add to the image
-    # author - quote author to add to the image
+    # @TODO Fix 'path' variable info
+    # text still spilling off edge of image
     parser = argparse.ArgumentParser(description='Create a meme using a photo, a quote, and an author.')
     parser.add_argument('--path', type=str, default=None, help='path to image file')
     parser.add_argument('--body', type=str, default=None, help='quote to add to image')
