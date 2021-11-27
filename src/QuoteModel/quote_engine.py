@@ -1,4 +1,8 @@
-"""A quote engine which can read in quotes saved in various file formats, and create `QuoteModel` objects."""
+"""A quote engine which can read in quotes saved in various file formats, and create `QuoteModel` objects.
+
+Uses an Ingestor Interface to create parsers for txt, pdf, docx, and csv file types.
+Quotes and authors are extracted from each supported file, and `QuoteModel` objects are
+created for all quote/author pairs."""
 
 import os
 import random
@@ -22,7 +26,9 @@ class QuoteModel:
         self.author = author
 
     def __repr__(self):
-        """Return `repr(self)`, a computer-readable string representation of this object."""
+        """Return `repr(self)`, a computer-readable string
+        representation of this object.
+        """
         return f"{self.body} - {self.author}"
 
 
@@ -47,7 +53,7 @@ class IngestorInterface(ABC):
             path (str): Path to the file being ingested.
 
         Returns:
-            bool: True if file can be ingested, false if not.
+            bool: True if file can be ingested, False if not.
         """
         ext = path.split(".")[-1]
         return ext in cls.allowed_extensions
@@ -55,14 +61,34 @@ class IngestorInterface(ABC):
     @classmethod
     @abstractmethod
     def parse(cls, path: str) -> List[QuoteModel]:
+        """parse method must be implemented in any
+        Ingestor class."""
         pass
 
 
 class TXTIngestor(IngestorInterface):
+    """Text ingestor class which can parse text
+    files to extract quotes and authors."""
     allowed_extensions = ["txt"]
 
     @classmethod
     def parse(cls, path: str) -> List[QuoteModel]:
+        """Parse a file and ingest if txt file.
+
+        If file is a txt file, read in data and
+        create `QuoteModel` objects for each quote
+        ingested. Return a list of `QuoteModel` objects.
+
+        Args:
+            path (str): String path to txt file.
+
+        Raises:
+            Exception: If file cannot be ingested,
+                raise exception.
+
+        Returns:
+            List[QuoteModel]: List of `QuoteModel objects.
+        """
         if not cls.can_ingest(path):
             raise Exception("cannot ingest exception")
 
@@ -83,6 +109,22 @@ class TXTIngestor(IngestorInterface):
 
 
 class CSVIngestor(IngestorInterface):
+    """Parse a file and ingest if csv file.
+
+    If file is a csv file, read in data and
+    create `QuoteModel` objects for each quote
+    ingested. Return a list of `QuoteModel` objects.
+
+    Args:
+        path (str): String path to csv file.
+
+    Raises:
+        Exception: If file cannot be ingested,
+            raise exception.
+
+    Returns:
+        List[QuoteModel]: List of `QuoteModel objects.
+    """
     allowed_extensions = ["csv"]
 
     @classmethod
@@ -103,6 +145,22 @@ class CSVIngestor(IngestorInterface):
 
 
 class DocxIngestor(IngestorInterface):
+    """Parse a file and ingest if docx file.
+
+    If file is a docx file, read in data and
+    create `QuoteModel` objects for each quote
+    ingested. Return a list of `QuoteModel` objects.
+
+    Args:
+        path (str): String path to docx file.
+
+    Raises:
+        Exception: If file cannot be ingested,
+            raise exception.
+
+    Returns:
+        List[QuoteModel]: List of `QuoteModel objects.
+    """
     allowed_extensions = ["docx"]
 
     @classmethod
@@ -125,6 +183,22 @@ class DocxIngestor(IngestorInterface):
 
 
 class PDFIngestor(IngestorInterface):
+    """Parse a file and ingest if pdf file.
+
+    If file is a pdf file, read in data and
+    create `QuoteModel` objects for each quote
+    ingested. Return a list of `QuoteModel` objects.
+
+    Args:
+        path (str): String path to pdf file.
+
+    Raises:
+        Exception: If file cannot be ingested,
+            raise exception.
+
+    Returns:
+        List[QuoteModel]: List of `QuoteModel objects.
+    """
     allowed_extensions = ["pdf"]
 
     @classmethod
@@ -155,10 +229,23 @@ class PDFIngestor(IngestorInterface):
 
 
 class Ingestor(IngestorInterface):
+    """Ingestor class which ingests any allowed quote file."""
     ingestors = [TXTIngestor, DocxIngestor, CSVIngestor, PDFIngestor]
 
     @classmethod
     def parse(cls, path: str) -> List[QuoteModel]:
+        """Parse a file and ingest if filetype is supported.
+
+        reate `QuoteModel` objects for each quote
+        ingested if file has an extension supported by
+        an ingestor. Return a list of `QuoteModel` objects.
+
+        Args:
+            path (str): String path to file.
+
+        Returns:
+            List[QuoteModel]: List of `QuoteModel objects.
+        """
         for ingester in cls.ingestors:
             if ingester.can_ingest(path):
                 return ingester.parse(path)
