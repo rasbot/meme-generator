@@ -10,6 +10,7 @@ on the image in a random position. The author name will be
 added below the image.
 """
 from random import randint
+from typing import List
 from PIL import Image, ImageDraw, ImageFont
 
 class MemeEngine:
@@ -17,13 +18,18 @@ class MemeEngine:
     
     Encapsulates the image object, resizing it, and adding
     text to the image. The final image is saved in the
-    `out_path` location."""
-    def __init__(self, out_path="./tmp", width=500):
-        """
+    `out_path` directory."""
+    def __init__(self, out_path: str="./tmp", width: int=500) -> None:
+        """Initialize a meme object.
+
+        Takes the output path for a meme image and
+        the resize width.
 
         Args:
-            out_path (str, optional): [description]. Defaults to "./tmp".
-            width (int, optional): [description]. Defaults to 500.
+            out_path (str, optional): Folder path for the meme
+                created. Defaults to "./tmp".
+            width (int, optional): Width of resized image.
+                Defaults to 500.
         """
         self.out_path = out_path
         self.img = None
@@ -31,11 +37,38 @@ class MemeEngine:
         self.filename = ""
 
     @staticmethod
-    def get_n_lines(body_len, max_len):
+    def get_n_lines(body_len: int, max_len: int) -> int:
+        """Get number of lines needed for meme.
+
+        Use the number of characters in the body text
+        and a maximum character length to determine how
+        many lines the meme text will need.
+
+        Args:
+            body_len (int): Length of body string.
+            max_len (int): Maximum character length per line
+                in meme text.
+
+        Returns:
+            int: Number of lines needed for meme text.
+        """
         return int(body_len / max_len) + (body_len % max_len > 0)
 
     @staticmethod
-    def split_longer_quote(body, max_len=25):
+    def split_longer_quote(body: str, max_len: int=25) -> List[str]:
+        """Split longer quotes into lines less than max_len.
+
+        For longer quotes, split the body string into shorter
+        strings to prevent the text from spilling over the image edge.
+
+        Args:
+            body (str): Quote string.
+            max_len (int, optional): Maximum line length of meme
+                text.. Defaults to 25.
+
+        Returns:
+            List[str]: List of shorter strings.
+        """
         n_lines = MemeEngine.get_n_lines(len(body), max_len)
         splt = body.split(" ")
         lines = []
@@ -55,12 +88,29 @@ class MemeEngine:
         return f"MemeEngine({self.out_path})"
 
     def resize_image(self):
+        """Resize an image using instance variable `width`.
+
+        Image will be resized to the width parameter, and the height
+        will be scaled proportionally to keep the original image aspect
+        ratio.
+        """
         ratio = self.width / float(self.img.size[0])
         height = int(ratio * float(self.img.size[1]))
         self.img = self.img.resize((self.width, height), Image.NEAREST)
 
-    def write_meme(self, body, author):
+    def write_meme(self, body: str, author: str) -> None:
+        """Write meme text on image.
 
+        Using the resized image, write meme text onto the image,
+        scaling the text size to fit on the page. If the quote string
+        is too long, break up the text to multiple lines. Text will be
+        randomly placed on the image, within a range to allow it to
+        be displayed correctly.
+
+        Args:
+            body (str): Quote string.
+            author (str): Author string.
+        """
         body_font_size = 35
         author_font_size = 20
         max_quote_len = 25
@@ -87,10 +137,27 @@ class MemeEngine:
         draw.text((x_pos + x_offset, y_pos + line_offset + 10), author, font=font, fill='white', stroke_width=2, stroke_fill='black')
 
     def save_file(self):
+        """Save final meme image to the `out_path` folder.
+        
+        Use a random file name to store the meme."""
         self.filename = f"{self.out_path}/{randint(0,100000)}.jpeg"
         self.img.save(self.filename)
 
-    def make_meme(self, img, body, author):
+    def make_meme(self, img: str, body: str, author: str) -> str:
+        """Main method to create the meme.
+
+        Reads in image path into image array, resizes the image,
+        writes quote text and author text onto image, saves the file
+        to a directory, and returns the file path of the saved meme.
+
+        Args:
+            img (str): Initial image location.
+            body (str): Quote string.
+            author (str): Author string.
+
+        Returns:
+            str: Final image file path.
+        """
         self.img = Image.open(img)
         self.resize_image()
         self.write_meme(body, author)
