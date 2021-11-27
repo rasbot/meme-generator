@@ -13,13 +13,15 @@ from random import randint
 from typing import List
 from PIL import Image, ImageDraw, ImageFont
 
+
 class MemeEngine:
-    """`MemeEngine` class used to create a meme object. 
-    
+    """`MemeEngine` class used to create a meme object.
+
     Encapsulates the image object, resizing it, and adding
     text to the image. The final image is saved in the
     `out_path` directory."""
-    def __init__(self, out_path: str="./tmp", width: int=500) -> None:
+
+    def __init__(self, out_path: str = "./tmp", width: int = 500) -> None:
         """Initialize a meme object.
 
         Takes the output path for a meme image and
@@ -55,7 +57,7 @@ class MemeEngine:
         return int(body_len / max_len) + (body_len % max_len > 0)
 
     @staticmethod
-    def split_longer_quote(body: str, max_len: int=25) -> List[str]:
+    def split_longer_quote(body: str, max_len: int = 25) -> List[str]:
         """Split longer quotes into lines less than max_len.
 
         For longer quotes, split the body string into shorter
@@ -72,7 +74,7 @@ class MemeEngine:
         n_lines = MemeEngine.get_n_lines(len(body), max_len)
         splt = body.split(" ")
         lines = []
-        for i in range(n_lines):
+        for _ in range(n_lines):
             line = ""
             while len(line) <= max_len and len(splt) > 0:
                 if len(line + splt[0]) <= max_len:
@@ -84,7 +86,9 @@ class MemeEngine:
         return lines
 
     def __repr__(self):
-        """Return `repr(self)`, a computer-readable string representation of this object."""
+        """Return `repr(self)`, a computer-readable string
+        representation of this object.
+        """
         return f"MemeEngine({self.out_path})"
 
     def resize_image(self):
@@ -114,7 +118,7 @@ class MemeEngine:
         body_font_size = 35
         author_font_size = 20
         max_quote_len = 25
-            
+
         if len(body) > max_quote_len:
             lines = MemeEngine.split_longer_quote(body)
             body_font_size = 30
@@ -125,20 +129,38 @@ class MemeEngine:
             x_offset = 0
 
         author = "- " + author
-        x_pos = randint(int(0.02 * self.img.width), int(0.12 * self.img.width))
-        y_pos = randint(int(0.02 * self.img.height), int(0.8 * self.img.height))
+        x_pos = randint(
+            int(0.02 * self.img.width), int(0.12 * self.img.width)
+            )
+        y_pos = randint(
+            int(0.02 * self.img.height), int(0.8 * self.img.height)
+            )
         draw = ImageDraw.Draw(self.img)
-        font = ImageFont.truetype('./fonts/cambriaz.ttf', size=body_font_size)
+        font = ImageFont.truetype("./fonts/cambriaz.ttf", size=body_font_size)
         line_offset = 0
         for line in lines:
-            draw.text((x_pos, y_pos + line_offset), line, font=font, fill='white', stroke_width=2, stroke_fill='black')
+            draw.text(
+                (x_pos, y_pos + line_offset),
+                line,
+                font=font,
+                fill="white",
+                stroke_width=2,
+                stroke_fill="black",
+            )
             line_offset += 35
-        font = ImageFont.truetype('d:/gal/cambriaz.ttf', size=author_font_size)
-        draw.text((x_pos + x_offset, y_pos + line_offset + 10), author, font=font, fill='white', stroke_width=2, stroke_fill='black')
+        font = ImageFont.truetype("d:/gal/cambriaz.ttf", size=author_font_size)
+        draw.text(
+            (x_pos + x_offset, y_pos + line_offset + 10),
+            author,
+            font=font,
+            fill="white",
+            stroke_width=2,
+            stroke_fill="black",
+        )
 
     def save_file(self):
         """Save final meme image to the `out_path` folder.
-        
+
         Use a random file name to store the meme."""
         self.filename = f"{self.out_path}/{randint(0,100000)}.jpeg"
         self.img.save(self.filename)
@@ -163,4 +185,3 @@ class MemeEngine:
         self.write_meme(body, author)
         self.save_file()
         return self.filename
-    
