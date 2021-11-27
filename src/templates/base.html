@@ -27,10 +27,16 @@
     </head>
     <body>
         {% block body %}{% endblock %}
-
+        <form method="POST" action="/">
+            Use Cat <input type="checkbox" name="use cat">
+            Use Machine Learning Quotes <input type="checkbox" name="use machine learning quotes">
+            <!-- <a class="btn btn-primary" href="{{url_for('meme_rand')}}">Random</a> -->
+            <button type="submit"><span>Random</span></button>
+            <!-- <input type="submit" title="Random"> -->
+        </form>
         <div class="nav">
-            <a class="btn btn-primary" href="{{url_for('meme_rand')}}">Random</a>
-            <a class="btn btn-outline-primary" href="{{url_for('meme_form')}}">Creator</a>    
+            <!-- <a class="btn btn-primary" href="{{url_for('meme_rand')}}">Random</a> -->
+            <a class="btn btn-outline-primary" href="{{url_for('meme_form')}}">Creator</a>
         </div>
     </body>
 </html>
