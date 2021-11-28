@@ -1,4 +1,6 @@
-# Meme Generator
+<div align="center">
+    <img src="src/_data/photos/readme_images/meme_generator.JPG" width="900" height="auto"/>
+</div>
 
 ## Table of Contents
 
@@ -13,23 +15,67 @@
 Using a Flask app, this meme generator will generate pet related memes that have an image of a pet, a quote written on the image, and an associated quote author. There are two types of pets supported - cats and dogs. There are two main modes to generate memes with this project, as well as sub-modes, as described below.
 
 __Local generation__
-> User will get a randomized image and quote/author for a specified animal type. 
+- User will get a randomized image and quote/author for a specified animal type. 
 
-> The user can also provide their own quote and author which will be used on a randomized image.
+- The user can also provide their own quote and author which will be used on a randomized image.
 
 __Flask GUI generation__
-> User will get a randomized image and quote/author for a specified animal type.
+- User will get a randomized image and quote/author for a specified animal type.
 
-> User can provide an image link, as well as their own quote and author, and a meme will be generated using those parameters.
+- User can provide an image link, as well as their own quote and author, and a meme will be generated using those parameters.
 
 # Image Generation
 
-Instead of using real animal images, a machine learning model was used to generate dog and cat images to use as memes. The model used to generate the animal images is BigGAN, which is a version of a Generative Aversarial Network (GAN). A GAN is a neural network trained on real images. Training a GAN takes a lot of training data, and to get good results, it can take a long time unless the model is trained on a high end system (specifically the graphics card, or GPU). Luckily there are pre-trained models which can be used to generate images.
+Instead of using real animal images, a machine learning model was used to generate dog and cat images to use as memes. The model used to generate the animal images is BigGAN, which is a version of a Generative Adversarial Network (GAN). A GAN is a neural network trained on real images. Training a GAN takes a lot of training data, and to get good results, it can take a long time unless the model is trained on a high end system (specifically the graphics card, or GPU). Luckily there are pre-trained models which can be used to generate images.
 
 ## GANs
 
-A GAN has two neural networks under the hood. There is a generator, and a discriminator. The generator will take an input image which is randomized noise, and pass it to the descriminator. The descriminator will give feedback to the generator, telling it how close it is to generating a realistic image of the target class (such as a dog or a cat). The generator will keep trying and attempting to improve the image generation until the metrics for how good the resulting image is pass a certain threshold.
+A GAN has two neural networks under the hood. There is a generator, and a discriminator. A simple description of how a GAN works: The generator will take an input image which is randomized noise, attempt to generate an image that looks like the training data, and pass it to the discriminator. The discriminator will classify the generated image and output a probability how how likely the generated image is a real image.
 
-The images used for this project were created with a higher diversity in the generation, which has a tradeoff of looking a bit...weird. This can be entertaining, and a handful of dog and cat images were used from this model.
+<div align="center">
+    <img src="src/_data/photos/readme_images/GAN.jpg" width="600" height="auto"/>
+    <p>Image source: https://medium.com/analytics-vidhya/gans-a-brief-introduction-to-generative-adversacarial-networks-f06216c7200e.</p>
+</div>
 
-The code to generate the images is provided, but requires a specific version of Tensorflow to be installed. Within the script has a link to the Tensorflow project code that can be ran via Google colab, which provides an online environment that anyone can use to generate GAN images. The categories are not limited to dogs and cats.
+>"We can think of the generator as being like a counterfeiter, trying to make fake money, and the discriminator as being like police, trying to allow legitimate money and catch counterfeit money.  
+To succeed in this game, the counterfeiter must learn to make money that is indistinguishable from genuine money, and the generator network must learn to create samples that are drawn from the same distribution as the training data."  
+-NIPS 2016 Tutorial: Generative Adversarial Networks, 2016
+
+The images used for this project were created with a higher diversity in the generation, which has a tradeoff of looking a bit...weird. This can be entertaining, and a handful of dog and cat images were used from this model. When generating dog images, they often times came out good, as shown in the left example below. Some images were not believable, with strange artifacts like longer ears, shown in the right example below.
+
+<div align="center">
+    <img src="src/_data/photos/readme_images/GAN_dogs.jpg" width="600" height="auto"/>
+    <p>GAN generated dogs.</p>
+</div>
+
+Cats were less "normal" looking and often looked strange. Two examples are given below.
+
+<div align="center">
+    <img src="src/_data/photos/readme_images/GAN_cats.jpg" width="600" height="auto"/>
+    <p>GAN generated cats.</p>
+</div>
+
+The code to generate the images is provided, but requires a specific version of Tensorflow to be installed. Within the script has a link to the Tensorflow project code that can be ran via Google colab, which provides an online environment that anyone can use to generate GAN images. The categories are not limited to dogs and cats. For instance, here are some generated images of magpies and wine bottles.
+
+<div align="center">
+    <img src="src/_data/photos/readme_images/magpies.png" width="700" height="auto"/>
+    <p>GAN generated magpies.</p>
+</div>
+
+<div align="center">
+    <img src="src/_data/photos/readme_images/wine_bottles.png" width="700" height="auto"/>
+    <p>GAN generated wine bottles.</p>
+</div>
+
+# Text Generation
+
+Memes for this project were generated using a machine learning model called GPT-2, developed by OpenAI. These were generated locally on my desktop machine, and had to be hand filtered for reasons described below. Half the memes in this project are generated using machine learning, but to round it out I included another equal number of quotes picked from web pages providing social media captions for dog and cat pictures. 
+
+## GPT-2
+
+GPT-2 is a transformer model which was pre-trained on over 8 million webpages, as well as a large number of books to create a generalized language model capable being fine-tuned to generate text. A good visual explanation of the model can be found here:
+
+https://jalammar.github.io/illustrated-gpt2/
+
+For this project, the model was fine-tuned (another training step) on selected memes from https://github.com/schesa/ImgFlip575K_Dataset. I specifically wanted to find memes that had animals in the text, but since that was not very plentiful, I replaced several keywords with dog/cat related words. Words like "boy", "human", "woman" were replaced with "cat", "dog", "cat". The model was re-trained on a GTX 1080ti graphics card for around 10 hours. Memes generated from this model were often littered with sexist or racist language. This is because the training data are memes scraped from the internet, and they often have hateful language. I had attempted to filter out some of these kinds of memes from the training data, but for this project I selected a subset of memes that sounded like what dogs or cats would say, so the memes used do not contain any untasteful language.
+
