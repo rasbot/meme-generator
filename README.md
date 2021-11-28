@@ -10,6 +10,8 @@
 * [Text Generation](#text-generation)
   * [GPT-2](#gpt-2)
 * [Meme Generation](#meme-generation)
+  * [Setup](#setup)
+  * [Modules](#modules)
   * [Main Page](#main-page)
   * [Creator Page](#creator-page)
 * [Next Steps](#next-steps)
@@ -92,7 +94,20 @@ For this project, the model was fine-tuned (another training step) on selected m
 
 # Meme Generation
 
-Memes are generated using a Flask app. The app.py script can be launched in the terminal, and a local URL will be generated which can be opened in a browser. 
+Memes are generated using a Flask app. The app.py script can be launched in the terminal, and a local URL will be generated which can be opened in a browser.
+
+## Setup
+
+To run this project, make sure all packages in the `requirements.txt` file are installed to the specified versions. This was generated from a virtual environment running Python 3.9 using the `pip freeze > requirements.txt` command. A more simplified requirements text is also provided as `_requirements.txt`. Note: tensorflow packages and scipy are only needed to run the GAN script (pet_gan.py).
+
+## Modules
+
+The project uses several modules to create memes and display them via Flask. These modules are:
+
+- app - The script that runs the Flask app and creates the user interface for generating memes.
+- meme - The script that can be used outside the Flask app to generate random memes, or user specified memes on random dog/cat images. The user can add their own text and author, or chose from normal and machine learning generated memes.
+- QuoteModel/quote_model - Creates `QuoteModel` objects which have a body and author from ingested quotes that are of filetypes txt, pdf, docx, and csv.
+- MemeEngine/meme_engine - From an image path, creates an image object, resized to a specified width while maintaining the aspect ratio, and adds text onto the image, saving it to a file location.
 
 ## Main Page
 
@@ -106,14 +121,14 @@ The main interface of the app looks like:
 The features on the main page include two checkboxes, a `Random` button, and a `Creator` button. By clicking on the `Random` button, a meme will be generated using a random quote/author placed on a random image. The default animal type will be dog, but the user can check the "Use Cat" checkbox to generate a meme using a cat and then hit the `Random` button to create a cat meme.
 
 <div align="center">
-    <img src="src/_data/photos/readme_images/app_base_cat.JPG" width="500" height="auto"/>
+    <img src="src/_data/photos/readme_images/app_base_cat.jpg" width="500" height="auto"/>
     <p>Meme Generator app using a cat image.</p>
 </div>
 
 The default quote type will be "normal", which are quotes picked off the internet by a human (the one typing out this README file). To generate a meme using machine learning generated quotes, simply check the associated checkbox and hit the `Random` button.
 
 <div align="center">
-    <img src="src/_data/photos/readme_images/app_base_ML.JPG" width="500" height="auto"/>
+    <img src="src/_data/photos/readme_images/app_base_ML.jpg" width="500" height="auto"/>
     <p>Meme Generator app using a machine learning quote.</p>
 </div>
 
