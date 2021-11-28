@@ -1,3 +1,5 @@
+"""This module creates GAN images for a specified category.
+"""
 # Copyright 2018 The TensorFlow Hub Authors. All Rights Reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,8 +18,6 @@
 # https://github.com/tensorflow/hub/blob/master/examples/colab/biggan_generation_with_tf_hub.ipynb
 
 # ==============================================================================
-import tensorflow.compat.v1 as tf
-tf.disable_v2_behavior()
 import json
 import argparse
 from random import randint
@@ -25,9 +25,10 @@ import PIL.Image
 import numpy as np
 from scipy.stats import truncnorm
 
+import tensorflow.compat.v1 as tf
 import tensorflow_hub as hub
 
-
+tf.disable_v2_behavior()
 
 
 def load_model(model_path: str) -> hub.Module:
@@ -55,8 +56,10 @@ def truncated_z_sample(
 
     Args:
         batch_size (int): Number of samples to generate.
-        truncation_coeff (float, optional): Truncation coefficient. Defaults to 1.
-        seed (float, optional): Seed used to determine latent features. Defaults to None.
+        truncation_coeff (float, optional): Truncation coefficient.
+            Defaults to 1.
+        seed (float, optional): Seed used to determine latent features.
+            Defaults to None.
 
     Returns:
         np.ndarray: Truncated z sample.
@@ -74,7 +77,8 @@ def one_hot(index: np.ndarray, vocab_size_: int = 1000) -> np.ndarray:
 
     Args:
         index (np.ndarray): Index array to one hot encode.
-        vocab_size (int, optional): Size of resulting array. Defaults to vocab_size.
+        vocab_size (int, optional): Size of resulting array.
+            Defaults to vocab_size.
 
     Returns:
         np.ndarray: One hot encoded array.
@@ -89,14 +93,18 @@ def one_hot(index: np.ndarray, vocab_size_: int = 1000) -> np.ndarray:
     return output_
 
 
-def one_hot_if_needed(label: np.ndarray, vocab_size_: int = 1000) -> np.ndarray:
+def one_hot_if_needed(
+        label: np.ndarray,
+        vocab_size_: int = 1000
+        ) -> np.ndarray:
     """One hot encode a label and ensure the shape of the array is equal to 2.
 
     Calls `one_hot` and one hot encodes a label array.
 
     Args:
         label (np.ndarray): Label array of categories.
-        vocab_size (int, optional): Size of resulting array. Defaults to vocab_size.
+        vocab_size (int, optional): Size of resulting array.
+            Defaults to vocab_size.
 
     Returns:
         np.ndarray: One hot encoded array.
@@ -109,24 +117,27 @@ def one_hot_if_needed(label: np.ndarray, vocab_size_: int = 1000) -> np.ndarray:
 
 
 def sample(
-        sess_: object,#tf.python.client.session.Session,
+        sess_: object,  # tf.python.client.session.Session,
         noise_: np.ndarray,
         label_: int,
         truncation_: float = 1.0,
         batch_size_: int = 10,
-        vocab_size: int = 1000,
+        vocab_size_: int = 1000,
 ) -> np.ndarray:
     """Generate samples with GAN.
 
     Main function used to generate images using bigGAN.
 
     Args:
-        sess (tf.python.client.session.Session): Tensorflow session.
-        noise (np.ndarray): Truncated z sample.
-        label (int): Label of sample type.
-        truncation (float, optional): Truncation coefficient. Defaults to 1.
-        batch_size (int, optional): Number of samples to generate. Defaults to 10.
-        vocab_size (int, optional): Used in one hot encoding. Defaults to 1000.
+        sess_ (tf.python.client.session.Session): Tensorflow session.
+        noise_ (np.ndarray): Truncated z sample.
+        label_ (int): Label of sample type.
+        truncation_ (float, optional): Truncation coefficient.
+            Defaults to 1.
+        batch_size_ (int, optional): Number of samples to generate.
+            Defaults to 10.
+        vocab_size_ (int, optional): Used in one hot encoding.
+            Defaults to 1000.
 
     Raises:
         ValueError: Raises exception if the number of noise samples is not
@@ -146,11 +157,15 @@ def sample(
                 noise.shape[0], label.shape[0]
             )
         )
-    label = one_hot_if_needed(label, vocab_size_=vocab_size)
+    label = one_hot_if_needed(label, vocab_size_=vocab_size_)
     ims_ = []
     for batch_start in range(0, num, batch_size_):
         slice_ = slice(batch_start, min(num, batch_start + batch_size_))
-        feed_dict = {input_z: noise[slice_], input_y: label[slice_], input_trunc: truncation_}
+        feed_dict = {
+            input_z: noise[slice_],
+            input_y: label[slice_],
+            input_trunc: truncation_,
+        }
         ims_.append(sess_.run(output, feed_dict=feed_dict))
     ims_ = np.concatenate(ims_, axis=0)
     assert ims_.shape[0] == num
@@ -164,7 +179,8 @@ def imgrid(imarray: np.ndarray, cols: int = 5, pad: int = 1) -> np.ndarray:
 
     Args:
         imarray (np.ndarray): Numpy array of images.
-        cols (int, optional): Number of columns in the grid. Defaults to 5.
+        cols (int, optional): Number of columns in the grid.
+            Defaults to 5.
         pad (int, optional): Optional padding if number of generated
             images do not fit evenly into the grid. Defaults to 1.
 
@@ -204,7 +220,9 @@ if __name__ == "__main__":
     with open("_data/categories.json", "r") as infile:
         CATEGORIES = json.load(infile)
 
-    parser = argparse.ArgumentParser(description="Pick parameters for GAN generator.")
+    parser = argparse.ArgumentParser(
+        description="Pick parameters for GAN generator."
+    )
 
     parser.add_argument(
         "--num_samples",
@@ -213,13 +231,22 @@ if __name__ == "__main__":
         help="number of samples generated by GAN. int range from 1 to 20.",
     )
     parser.add_argument(
-        "--category", type=str, default="230", help="category to generate."
+        "--category",
+        type=str,
+        default="230",
+        help="category to generate."
     )
     parser.add_argument(
-        "--noise", type=int, default=0, help="int with range from 0 to 100."
+        "--noise",
+        type=int,
+        default=0,
+        help="int with range from 0 to 100."
     )
     parser.add_argument(
-        "--truncation", type=float, default=0.4, help="float with range 0.02 to 1."
+        "--truncation",
+        type=float,
+        default=0.4,
+        help="float with range 0.02 to 1."
     )
     parser.add_argument(
         "--filename",
@@ -246,7 +273,11 @@ if __name__ == "__main__":
     }
     output = module(inputs)
 
-    print("Inputs:\n", "\n".join("  {}: {}".format(*kv) for kv in inputs.items()))
+    print(
+        "Inputs:\n", "\n".join(
+            "  {}: {}".format(*kv) for kv in inputs.items()
+        )
+    )
     print("-" * 30)
     print("Output:", output)
 
@@ -264,7 +295,7 @@ if __name__ == "__main__":
     z = truncated_z_sample(num_samples, truncation, noise_seed)
     y = int(category.split(")")[0])
 
-    ims = sample(sess, z, y, truncation_=truncation, vocab_size=vocab_size)
+    ims = sample(sess, z, y, truncation_=truncation, vocab_size_=vocab_size)
     img_grid = imgrid(ims, cols=min(num_samples, 5))
     im = PIL.Image.fromarray(img_grid)
     im.save(filename)
