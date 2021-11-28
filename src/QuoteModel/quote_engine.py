@@ -216,7 +216,8 @@ class PDFIngestor(IngestorInterface):
     def parse(cls, path: str) -> List[QuoteModel]:
         if not cls.can_ingest(path):
             raise Exception("cannot ingest exception")
-
+        if not os.path.isdir("./tmp"):
+            os.makedirs("./tmp")
         tmp = f"./tmp/{random.randint(0,100000000)}.txt"
         _ = subprocess.call(["pdftotext", path, tmp])
 
