@@ -9,6 +9,10 @@
   * [GANs](#gans)
 * [Text Generation](#text-generation)
   * [GPT-2](#gpt-2)
+* [Meme Generation](#meme-generation)
+  * [Main Page](#main-page)
+  * [Creator Page](#creator-page)
+* [Next Steps](#next-steps)
 
 # Introduction
 
@@ -77,5 +81,65 @@ GPT-2 is a transformer model which was pre-trained on over 8 million webpages, a
 
 https://jalammar.github.io/illustrated-gpt2/
 
+The basic transformer model uses an attention mechanism, and has a general structure shown below.
+
+<div align="center">
+    <img src="src/_data/photos/readme_images/transformer.png" width="500" height="auto"/>
+    <p>Image source: https://towardsdatascience.com/examining-the-transformer-architecture-part-1-the-openai-gpt-2-controversy-feceda4363bb.</p>
+</div>
+
 For this project, the model was fine-tuned (another training step) on selected memes from https://github.com/schesa/ImgFlip575K_Dataset. I specifically wanted to find memes that had animals in the text, but since that was not very plentiful, I replaced several keywords with dog/cat related words. Words like "boy", "human", "woman" were replaced with "cat", "dog", "cat". The model was re-trained on a GTX 1080ti graphics card for around 10 hours. Memes generated from this model were often littered with sexist or racist language. This is because the training data are memes scraped from the internet, and they often have hateful language. I had attempted to filter out some of these kinds of memes from the training data, but for this project I selected a subset of memes that sounded like what dogs or cats would say, so the memes used do not contain any untasteful language.
 
+# Meme Generation
+
+Memes are generated using a Flask app. The app.py script can be launched in the terminal, and a local URL will be generated which can be opened in a browser. 
+
+## Main Page
+
+The main interface of the app looks like:
+
+<div align="center">
+    <img src="src/_data/photos/readme_images/app_base.JPG" width="500" height="auto"/>
+    <p>Meme Generator app main page.</p>
+</div>
+
+The features on the main page include two checkboxes, a `Random` button, and a `Creator` button. By clicking on the `Random` button, a meme will be generated using a random quote/author placed on a random image. The default animal type will be dog, but the user can check the "Use Cat" checkbox to generate a meme using a cat and then hit the `Random` button to create a cat meme.
+
+<div align="center">
+    <img src="src/_data/photos/readme_images/app_base_cat.JPG" width="500" height="auto"/>
+    <p>Meme Generator app using a cat image.</p>
+</div>
+
+The default quote type will be "normal", which are quotes picked off the internet by a human (the one typing out this README file). To generate a meme using machine learning generated quotes, simply check the associated checkbox and hit the `Random` button.
+
+<div align="center">
+    <img src="src/_data/photos/readme_images/app_base_ML.JPG" width="500" height="auto"/>
+    <p>Meme Generator app using a machine learning quote.</p>
+</div>
+
+And of course the user may select both checkboxes to generate a cat meme with a machine learning generated quote.
+
+<div align="center">
+    <img src="src/_data/photos/readme_images/cat_ML.JPG" width="500" height="auto"/>
+    <p>Meme Generator app using a cat image with a machine learning quote.</p>
+</div>
+
+## Creator Page
+
+By clicking on the "Creator" button, the user will be taken to a page that allows them to pick an image off the internet and add their own text and author. The position of the text will still be randomized.
+
+<div align="center">
+    <img src="src/_data/photos/readme_images/creator.jpg" width="500" height="auto"/>
+    <p>Creator page.</p>
+</div>
+
+And the resulting meme will be generated.
+
+<div align="center">
+    <img src="src/_data/photos/readme_images/PPAP.jpg" width="500" height="auto"/>
+    <p>Pen Pineapple Apple Pen.</p>
+</div>
+
+# Next Steps
+
+The next steps would be to add more image types for random meme generation, and host the flask app on a server. The position of the text on the image should be weighted so it appears at the top or bottom of the image most of the time, to prevent it from covering the face of the animal. Ideally having the text generator model be able to create live samples would be interesting, but due to the problematic nature of the meme training data, having generated text that a human does not check could be a bad idea.
