@@ -117,7 +117,7 @@ class MemeEngine:
         """
         body_font_size = 35
         author_font_size = 20
-        max_quote_len = 25
+        max_quote_len = 22
 
         if len(body) > max_quote_len:
             lines = MemeEngine.split_longer_quote(body)
@@ -126,7 +126,7 @@ class MemeEngine:
             x_offset = 22
         else:
             lines = [body]
-            x_offset = 0
+            x_offset = 15
 
         author = "- " + author
         x_pos = randint(
@@ -138,9 +138,14 @@ class MemeEngine:
         draw = ImageDraw.Draw(self.img)
         font = ImageFont.truetype("./fonts/cambriaz.ttf", size=body_font_size)
         line_offset = 0
+        # subtract a value for every line so multi-line quotes don't go below
+        # lower edge of image
+        lines_offset = 0
+        if len(lines) > 1 and (y_pos > 0.5 * self.img.height):
+            lines_offset = 35 * (len(lines) - 1)
         for line in lines:
             draw.text(
-                (x_pos, y_pos + line_offset),
+                (x_pos, y_pos + line_offset - lines_offset),
                 line,
                 font=font,
                 fill="white",
@@ -150,7 +155,7 @@ class MemeEngine:
             line_offset += 35
         font = ImageFont.truetype("d:/gal/cambriaz.ttf", size=author_font_size)
         draw.text(
-            (x_pos + x_offset, y_pos + line_offset + 10),
+            (x_pos + x_offset, y_pos + line_offset - lines_offset + 10),
             author,
             font=font,
             fill="white",
