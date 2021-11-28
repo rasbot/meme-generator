@@ -248,7 +248,7 @@ if __name__ == "__main__":
 
     category = CATEGORIES[args.category]
 
-    MODULE_PATH = "https://tfhub.dev/deepmind/biggan-deep-512/1"
+    MODULE_PATH = "https://tfhub.dev/deepmind/biggan-deep-256/1"
 
     tf.reset_default_graph()
     print("Loading BigGAN module from:", MODULE_PATH)
