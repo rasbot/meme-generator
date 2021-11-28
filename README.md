@@ -121,7 +121,7 @@ The main interface of the app looks like:
 The features on the main page include two checkboxes, a `Random` button, and a `Creator` button. By clicking on the `Random` button, a meme will be generated using a random quote/author placed on a random image. The default animal type will be dog, but the user can check the "Use Cat" checkbox to generate a meme using a cat and then hit the `Random` button to create a cat meme.
 
 <div align="center">
-    <img src="src/_data/photos/readme_images/app_base_cat.jpg" width="500" height="auto"/>
+    <img src="src/_data/photos/readme_images/app_base_cat.JPG" width="500" height="auto"/>
     <p>Meme Generator app using a cat image.</p>
 </div>
 
@@ -135,7 +135,7 @@ The default quote type will be "normal", which are quotes picked off the interne
 And of course the user may select both checkboxes to generate a cat meme with a machine learning generated quote.
 
 <div align="center">
-    <img src="src/_data/photos/readme_images/cat_ML.JPG" width="500" height="auto"/>
+    <img src="src/_data/photos/readme_images/cat_ML.jpg" width="500" height="auto"/>
     <p>Meme Generator app using a cat image with a machine learning quote.</p>
 </div>
 
