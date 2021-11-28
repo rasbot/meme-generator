@@ -31,21 +31,6 @@ import tensorflow_hub as hub
 tf.disable_v2_behavior()
 
 
-def load_model(model_path: str) -> hub.Module:
-    """Load a hub model.
-
-    Args:
-        model_path (str): Path to model.
-
-    Returns:
-        hub.Module: hub model.
-    """
-    tf.reset_default_graph()
-    print("Loading BigGAN module from:", model_path)
-    model = hub.Module(model_path)
-    return model
-
-
 def truncated_z_sample(
         batch_size: int, truncation_coeff: float = 1.0, seed: float = None
 ) -> np.ndarray:
@@ -265,7 +250,9 @@ if __name__ == "__main__":
 
     MODULE_PATH = "https://tfhub.dev/deepmind/biggan-deep-512/1"
 
-    module = load_model(MODULE_PATH)
+    tf.reset_default_graph()
+    print("Loading BigGAN module from:", MODULE_PATH)
+    model = hub.Module(MODULE_PATH)
 
     inputs = {
         k: tf.placeholder(v.dtype, v.get_shape().as_list(), k)
