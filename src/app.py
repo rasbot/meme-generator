@@ -15,6 +15,9 @@ from MemeEngine.meme_engine import MemeEngine
 
 APP = Flask(__name__)
 
+if not os.path.isdir("./static"):
+    os.makedirs("./static")
+
 MEME = MemeEngine("./static")
 
 
@@ -133,22 +136,27 @@ def meme_form():
 @APP.route("/create", methods=["POST"])
 def meme_post():
     """Create a user defined meme."""
-    image_url = request.form["image_url"]
-    img_file = f"./static/{random.randint(0,100000)}.png"
+    try:
+        image_url = request.form["image_url"]
+        img_file = f"./static/{random.randint(0,100000)}.png"
 
-    response = requests.get(image_url)
-    if response.status_code == 200:
-        with open(img_file, "wb") as out_file:
-            out_file.write(response.content)
+        response = requests.get(image_url)
+        if response.status_code == 200:
+            with open(img_file, "wb") as out_file:
+                out_file.write(response.content)
 
-    body = request.form["body"]
-    author = request.form["author"]
+        body = request.form["body"]
+        author = request.form["author"]
 
-    path = MEME.make_meme(img_file, body, author)
+        path = MEME.make_meme(img_file, body, author)
 
-    os.remove(img_file)
-
+        os.remove(img_file)
+        
+    except:
+        print("Invalid image file path")
+        return render_template("meme_error.html")
     return render_template("meme.html", path=path)
+    
 
 
 if __name__ == "__main__":
