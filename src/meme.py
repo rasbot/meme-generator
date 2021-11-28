@@ -81,7 +81,7 @@ if __name__ == "__main__":
     PARSER.add_argument(
         "--path",
         type=str,
-        default="",
+        default="./tmp",
         help="path to image file"
     )
     PARSER.add_argument(
