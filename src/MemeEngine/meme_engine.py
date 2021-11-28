@@ -21,7 +21,7 @@ class MemeEngine:
     text to the image. The final image is saved in the
     `out_path` directory."""
 
-    def __init__(self, out_path: str = "./tmp", width: int = 500) -> None:
+    def __init__(self, out_path: str = "./tmp") -> None:
         """Initialize a meme object.
 
         Takes the output path for a meme image and
@@ -30,12 +30,9 @@ class MemeEngine:
         Args:
             out_path (str, optional): Folder path for the meme
                 created. Defaults to "./tmp".
-            width (int, optional): Width of resized image.
-                Defaults to 500.
         """
         self.out_path = out_path
         self.img = None
-        self.width = width
         self.filename = ""
 
     @staticmethod
@@ -170,7 +167,7 @@ class MemeEngine:
         self.filename = f"{self.out_path}/{randint(0,100000)}.jpeg"
         self.img.save(self.filename)
 
-    def make_meme(self, img: str, body: str, author: str) -> str:
+    def make_meme(self, img: str, body: str, author: str, width: int=500) -> str:
         """Main method to create the meme.
 
         Reads in image path into image array, resizes the image,
@@ -181,10 +178,13 @@ class MemeEngine:
             img (str): Initial image location.
             body (str): Quote string.
             author (str): Author string.
+            width (int, optional): Width of resized image. Defaults to 500.
+
 
         Returns:
             str: Final image file path.
         """
+        self.width = width
         self.img = Image.open(img)
         self.resize_image()
         self.write_meme(body, author)
